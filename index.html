@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diet & Fitness Dashboard</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#687386;--blue:#2563eb;--green:#16a34a;--border:#e5e7eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+header{background:linear-gradient(135deg,#1d4ed8,#06b6d4);color:white;padding:28px 18px}.wrap{max-width:1150px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center}.top h1{margin:0}.top p{margin:6px 0 0;opacity:.9}
+main{padding:20px 18px}.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}.toolbar input{padding:10px;border:1px solid var(--border);border-radius:9px}
+.grid{display:grid;gap:15px}.stats{grid-template-columns:repeat(4,1fr)}.three{grid-template-columns:repeat(3,1fr)}
+.card{background:white;border:1px solid var(--border);border-radius:15px;padding:17px;box-shadow:0 4px 15px #0f172a08}
+.label{color:var(--muted);font-size:13px}.value{font-size:25px;font-weight:800;margin:5px 0}.progress{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--blue);width:0}
+h2{margin:24px 0 11px}.meal{display:grid;grid-template-columns:1.05fr 2fr .7fr .6fr .6fr .55fr;gap:10px;align-items:center;padding:13px 0;border-bottom:1px solid var(--border)}.meal:last-child{border-bottom:0}.mealname{font-weight:800}.food{color:var(--muted);font-size:14px}.done{width:24px;height:24px;accent-color:var(--green)}
+button{padding:10px 14px;border:0;border-radius:9px;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e8eefc;color:#1e40af}.success{background:#dcfce7;color:#166534}.status{padding:6px 9px;border-radius:99px;background:#eef2ff;color:#3730a3;font-size:13px}
+input[type=number]{padding:10px;border:1px solid var(--border);border-radius:9px;width:120px}
+table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:14px}th{color:var(--muted)}
+#msg{margin-top:8px;font-size:13px;color:var(--muted)}
+@media(max-width:800px){.stats,.three{grid-template-columns:1fr 1fr}.meal{grid-template-columns:1fr 1fr}.food{grid-column:1/-1}}
+@media(max-width:520px){.stats,.three{grid-template-columns:1fr}.top{flex-direction:column;align-items:flex-start;gap:10px}}
+</style></head>
+<body>
+<header><div class="wrap top"><div><h1>🥗 Diet & Fitness Dashboard</h1><p>Google Sheets connected • Daily diet, calories & weight</p></div><button class="secondary" onclick="loadHistory()">↻ Sync History</button></div></header>
+<main class="wrap">
+<div class="toolbar"><b>Date:</b><input type="date" id="date"><span class="status" id="count">0 / 6 meals</span><button class="primary" onclick="saveToSheet()">☁️ Save to Google Sheet</button></div>
+<div class="grid stats">
+<div class="card"><div class="label">🔥 Calories</div><div class="value"><span id="cal">0</span> / 2,885</div><div class="progress"><div id="calbar" class="bar"></div></div></div>
+<div class="card"><div class="label">💪 Protein</div><div class="value"><span id="protein">0</span> / 135g</div><div class="progress"><div id="pbar" class="bar"></div></div></div>
+<div class="card"><div class="label">🍚 Carbs</div><div class="value"><span id="carbs">0</span> / 345g</div><div class="progress"><div id="cbar" class="bar"></div></div></div>
+<div class="card"><div class="label">🥑 Fat</div><div class="value"><span id="fat">0</span> / 105g</div><div class="progress"><div id="fbar" class="bar"></div></div></div>
+</div>
+<h2>🍽️ Today's Meals</h2>
+<div class="card"><div class="meal" style="font-weight:800;color:#687386"><div>Meal</div><div>Food</div><div>Calories</div><div>Protein</div><div>Carbs</div><div>Done</div></div><div id="meals"></div></div>
+<h2>⚖️ Weight</h2>
+<div class="grid three"><div class="card"><b>Today's Weight</b><p><input id="weight" type="number" step=".1" placeholder="52.5 kg"> <button class="success" onclick="saveLocal()">Save</button></p><div id="msg"></div></div><div class="card"><div class="label">Starting Weight</div><div class="value" id="start">—</div></div><div class="card"><div class="label">Change</div><div class="value" id="change">—</div></div></div>
+<h2>📅 Google Sheet History</h2>
+<div class="card"><table><thead><tr><th>Date</th><th>Calories</th><th>Protein</th><th>Meals</th><th>Weight</th></tr></thead><tbody id="history"><tr><td colspan="5">Click Sync History after connecting the Apps Script URL.</td></tr></tbody></table></div>
+</main>
+<script>
+const meals=[
+["🌅 Breakfast","Sattu 50g • Milk 250ml • Banana • Apple • Peanut butter 1 tbsp",650,25,90,20],
+["🕚 Mid-morning","Kala chana 42g • 5 cashews • 20 raisins",250,10,40,7],
+["🍛 Lunch","Cooked rice 200g • Dal 150g • Sabji 100g",540,19,90,10],
+["🏋️ Pre-workout","Sattu 50g • Banana",300,13,50,4],
+["🍽️ Post-workout / Dinner","Paneer 150g • 2 roti • Sabji 100g",800,35,60,35],
+["🌙 Before bed","3 whole eggs • 2 egg whites • Peanut butter 1 tbsp",345,33,5,22]];
+const targets=[2885,135,345,105];
+let API_URL="https://script.google.com/macros/s/AKfycbwN_-9Qm-R71CY8q8kvQQgWRnmlgtICm42lYQ3LzeyFJuHDOGAVipeiBzWVgmRqc0VH/exec";
+let db=JSON.parse(localStorage.getItem("dietLocal")||"{}");
+let date=new Date().toISOString().slice(0,10);
+const $=id=>document.getElementById(id);
+$("date").value=date;
+function day(){if(!db[date])db[date]={done:Array(6).fill(false),weight:""};return db[date]}
+function saveLocal(){db[date].weight=$("weight").value;localStorage.setItem("dietLocal",JSON.stringify(db));$("msg").textContent="Saved locally ✓";render()}
+function toggle(i,v){day().done[i]=v;localStorage.setItem("dietLocal",JSON.stringify(db));render()}
+function render(){
+const d=day();$("weight").value=d.weight||"";
+$("meals").innerHTML=meals.map((m,i)=>`<div class="meal"><div class="mealname">${m[0]}</div><div class="food">${m[1]}</div><div>${m[2]} kcal</div><div>${m[3]}g</div><div>${m[4]}g</div><div><input class="done" type="checkbox" ${d.done[i]?"checked":""} onchange="toggle(${i},this.checked)"></div></div>`).join("");
+let v=[0,0,0,0,n=0];meals.forEach((m,i)=>{if(d.done[i]){v[0]+=m[2];v[1]+=m[3];v[2]+=m[4];v[3]+=m[5];n++}});
+$("cal").textContent=v[0];$("protein").textContent=v[1];$("carbs").textContent=v[2];$("fat").textContent=v[3];$("count").textContent=`${n} / 6 meals`;
+["calbar","pbar","cbar"].forEach((id,i)=>$(id).style.width=Math.min(100,v[i]/targets[i]*100)+"%");
+$("fbar").style.width=Math.min(100,v[3]/targets[3]*100)+"%";updateWeight();
+}
+function totals(){const d=day(),v={cal:0,p:0,c:0,f:0};meals.forEach((m,i)=>{if(d.done[i]){v.cal+=m[2];v.p+=m[3];v.c+=m[4];v.f+=m[5]}});return v}
+async function saveToSheet(){
+if(!API_URL){API_URL=prompt("Paste your Google Apps Script Web App URL:","");if(!API_URL)return;localStorage.setItem("dietApiUrl",API_URL)}
+const d=day(),t=totals();$("msg").textContent="Saving...";
+try{const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({date,done:d.done,weight:d.weight,calories:t.cal,protein:t.p,carbs:t.c,fat:t.f}),headers:{"Content-Type":"text/plain;charset=utf-8"}});
+const j=await res.json();$("msg").textContent=j.ok?"Saved to Google Sheet ✓":"Error: "+j.error}catch(e){$("msg").textContent="Could not connect. Check your Apps Script URL/deployment."}
+}
+async function loadHistory(){
+if(!API_URL){API_URL=prompt("Paste your Google Apps Script Web App URL:","");if(!API_URL)return;localStorage.setItem("dietApiUrl",API_URL)}
+$("history").innerHTML="<tr><td colspan=5>Loading...</td></tr>";
+try{const r=await fetch(API_URL+"?action=history");const rows=await r.json();$("history").innerHTML=rows.length?rows.slice(0,30).map(x=>`<tr><td>${x.date}</td><td>${x.calories} kcal</td><td>${x.protein} g</td><td>${x.done.filter(Boolean).length}/6</td><td>${x.weight??"—"}</td></tr>`).join(""):"<tr><td colspan=5>No records found.</td></tr>"}catch(e){$("history").innerHTML="<tr><td colspan=5>Connection error.</td></tr>"}}
+function updateWeight(){const rows=Object.values(db).filter(x=>x.weight).map(x=>+x.weight);if(rows.length){$("start").textContent=rows[0].toFixed(1)+" kg";$("change").textContent=((+day().weight||rows[rows.length-1])-rows[0]).toFixed(1)+" kg"}}
+$("date").onchange=e=>{date=e.target.value;render()};render();
+</script></body></html>
