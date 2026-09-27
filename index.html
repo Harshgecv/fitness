@@ -2,76 +2,133 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Diet & Fitness Dashboard</title>
+<title>FitTrack — Diet & Gym</title>
 <style>
-:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#687386;--blue:#2563eb;--green:#16a34a;--border:#e5e7eb}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
-header{background:linear-gradient(135deg,#1d4ed8,#06b6d4);color:white;padding:28px 18px}.wrap{max-width:1150px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center}.top h1{margin:0}.top p{margin:6px 0 0;opacity:.9}
-main{padding:20px 18px}.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}.toolbar input{padding:10px;border:1px solid var(--border);border-radius:9px}
-.grid{display:grid;gap:15px}.stats{grid-template-columns:repeat(4,1fr)}.three{grid-template-columns:repeat(3,1fr)}
-.card{background:white;border:1px solid var(--border);border-radius:15px;padding:17px;box-shadow:0 4px 15px #0f172a08}
-.label{color:var(--muted);font-size:13px}.value{font-size:25px;font-weight:800;margin:5px 0}.progress{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--blue);width:0}
-h2{margin:24px 0 11px}.meal{display:grid;grid-template-columns:1.05fr 2fr .7fr .6fr .6fr .55fr;gap:10px;align-items:center;padding:13px 0;border-bottom:1px solid var(--border)}.meal:last-child{border-bottom:0}.mealname{font-weight:800}.food{color:var(--muted);font-size:14px}.done{width:24px;height:24px;accent-color:var(--green)}
-button{padding:10px 14px;border:0;border-radius:9px;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e8eefc;color:#1e40af}.success{background:#dcfce7;color:#166534}.status{padding:6px 9px;border-radius:99px;background:#eef2ff;color:#3730a3;font-size:13px}
-input[type=number]{padding:10px;border:1px solid var(--border);border-radius:9px;width:120px}
-table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:14px}th{color:var(--muted)}
-#msg{margin-top:8px;font-size:13px;color:var(--muted)}
-@media(max-width:800px){.stats,.three{grid-template-columns:1fr 1fr}.meal{grid-template-columns:1fr 1fr}.food{grid-column:1/-1}}
-@media(max-width:520px){.stats,.three{grid-template-columns:1fr}.top{flex-direction:column;align-items:flex-start;gap:10px}}
-</style></head>
+:root{--bg:#f5f7fb;--card:#fff;--text:#101828;--muted:#667085;--line:#e7eaf0;--accent:#7c3aed;--accent2:#06b6d4;--green:#16a34a;--orange:#f59e0b;--red:#ef4444;--dark:#111827;--soft:#f3f0ff;--shadow:0 10px 30px rgba(15,23,42,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{border:0;cursor:pointer;font-weight:750}.wrap{max-width:1180px;margin:auto;padding:0 18px}
+header{background:linear-gradient(135deg,#111827 0%,#1f2937 55%,#312e81 100%);color:#fff;padding:26px 0 22px;position:relative;overflow:hidden}header:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:#7c3aed55;right:-100px;top:-170px;filter:blur(10px)}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;z-index:1}.brand{display:flex;gap:13px;align-items:center}.brand-icon{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#8b5cf6,#22d3ee);display:grid;place-items:center;font-size:25px;box-shadow:0 8px 25px #0004}.brand h1{margin:0;font-size:25px;letter-spacing:-.5px}.brand p{margin:4px 0 0;color:#cbd5e1;font-size:13px}.header-actions{display:flex;gap:9px;flex-wrap:wrap}.btn{padding:10px 14px;border-radius:11px}.btn-light{background:#ffffff16;color:#fff;border:1px solid #ffffff20}.btn-primary{background:linear-gradient(135deg,#7c3aed,#6366f1);color:#fff;box-shadow:0 8px 20px #4f46e533}.btn-green{background:#dcfce7;color:#166534}.btn-soft{background:var(--soft);color:#5b21b6}.btn-danger{background:#fee2e2;color:#991b1b}
+main{padding:22px 0 50px}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}.datebox{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 11px}.datebox input{border:0;outline:0;background:transparent;color:var(--text);font-weight:700}.pill{padding:8px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13px;color:var(--muted);font-weight:700}.toolbar .push{margin-left:auto}
+.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(4,1fr)}.three{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:repeat(2,1fr)}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:var(--shadow)}.stat{position:relative;overflow:hidden}.stat:after{content:"";position:absolute;width:80px;height:80px;border-radius:50%;background:var(--soft);right:-30px;top:-30px}.label{color:var(--muted);font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.04em}.value{font-size:26px;font-weight:850;margin:6px 0 10px;letter-spacing:-.5px}.value small{font-size:13px;color:var(--muted);font-weight:650}.progress{height:8px;background:#edf0f4;border-radius:99px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,#7c3aed,#06b6d4);border-radius:99px;transition:.3s}.sub{font-size:12px;color:var(--muted);margin-top:7px}
+h2{font-size:18px;margin:27px 0 11px;letter-spacing:-.2px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px}.section-title h2{margin-bottom:11px}.meal-card{background:#fff;border:1px solid var(--line);border-radius:17px;margin-bottom:10px;overflow:hidden;box-shadow:0 5px 20px rgba(15,23,42,.04)}.meal-head{display:grid;grid-template-columns:1.25fr 1fr auto;gap:12px;align-items:center;padding:15px 17px;cursor:pointer}.meal-head:hover{background:#fafbff}.meal-name{font-weight:850;font-size:16px}.meal-summary{color:var(--muted);font-size:12px;margin-top:3px}.meal-total{text-align:right;font-weight:800;font-size:13px}.chevron{font-size:14px;color:var(--muted)}.food-list{border-top:1px solid var(--line);padding:8px 17px 15px;background:#fcfcfe}.food-head,.food-row{display:grid;grid-template-columns:32px 1.7fr .55fr .55fr .55fr .55fr 30px;gap:8px;align-items:center}.food-head{padding:5px 0;color:#98a2b3;font-size:10px;text-transform:uppercase;font-weight:800}.food-row{padding:10px 0;border-top:1px solid #edf0f4}.food-name{font-weight:700;font-size:13px}.food-meta{font-size:11px;color:var(--muted);margin-top:2px}.food-check{width:19px;height:19px;accent-color:#16a34a}.macro{font-size:12px;color:#475467}.food-cal{font-weight:800;color:#111827}.tiny-delete{background:transparent;color:#98a2b3;padding:4px}.tiny-delete:hover{color:var(--red)}.add-food{margin-top:9px}.custom-tag{font-size:9px;padding:3px 6px;border-radius:99px;background:#fef3c7;color:#92400e;margin-left:5px;font-weight:800}
+.chart-wrap{height:280px;position:relative}.chart-controls{display:flex;gap:7px}.chart-controls button{padding:7px 10px;border-radius:9px;background:#f2f4f7;color:#667085;font-size:12px}.chart-controls button.active{background:#ede9fe;color:#6d28d9}.chart-wrap canvas{width:100%;height:100%}.chart-empty{display:grid;place-items:center;height:100%;color:var(--muted);font-size:13px}
+.water-card{display:grid;grid-template-columns:1fr auto;gap:15px;align-items:center}.water-controls{display:flex;align-items:center;gap:9px}.water-num{font-size:25px;font-weight:850;min-width:95px;text-align:center}.water-btn{width:40px;height:40px;border-radius:50%;font-size:20px;padding:0}.water-label{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin:7px 0}.water-full{grid-column:1/-1}
+.weight-card{display:flex;align-items:center;justify-content:space-between;gap:10px}.weight-input{width:115px}.input{padding:10px;border:1px solid var(--line);border-radius:10px;outline:0;background:#fff;width:100%}.input:focus{border-color:#a78bfa;box-shadow:0 0 0 3px #7c3aed12}
+/* Gym */.gym-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:13px}.gym-mini{padding:12px;border-radius:13px;background:#f8fafc;border:1px solid var(--line)}.gym-mini b{font-size:18px}.exercise{border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden;background:#fff}.exercise-head{display:flex;justify-content:space-between;align-items:center;padding:12px 13px;background:#fafafa}.exercise-name{font-weight:800}.exercise-actions{display:flex;gap:6px}.sets{padding:8px 12px}.set-row{display:grid;grid-template-columns:32px 1fr 1fr 1fr 35px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #f0f1f3}.set-row:last-child{border-bottom:0}.set-no{font-size:12px;font-weight:800;color:var(--muted)}.set-row input{padding:7px 8px;font-size:12px}.done-set{accent-color:#16a34a}.gym-footer{display:flex;gap:8px;flex-wrap:wrap}.workout-type{min-width:160px}.badge{font-size:11px;padding:5px 8px;border-radius:999px;background:#ede9fe;color:#6d28d9;font-weight:800}.history-table{overflow:auto}.history-table table{width:100%;border-collapse:collapse}.history-table th,.history-table td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:12px;white-space:nowrap}.history-table th{color:#98a2b3;text-transform:uppercase;font-size:10px}.status{font-size:12px;padding:7px 9px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:750}
+.modal-backdrop{display:none;position:fixed;inset:0;background:#0f172a99;z-index:30;align-items:center;justify-content:center;padding:18px}.modal{width:min(540px,100%);background:#fff;border-radius:20px;padding:20px;box-shadow:0 25px 80px #0005}.modal h3{margin:0 0 4px}.modal label{font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:5px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.full{grid-column:1/-1}.modal input,.modal select{width:100%}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.empty{color:var(--muted);font-size:13px;padding:12px 0}.small{font-size:11px;color:var(--muted)}#msg{font-size:12px;color:var(--muted)}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.meal-head{grid-template-columns:1fr auto}.meal-total{grid-column:1/-1;text-align:left}.two,.three{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.stats,.two,.three{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.header-actions{width:100%}.header-actions button{flex:1}.toolbar .push{margin-left:0}.water-card{grid-template-columns:1fr}.food-head{display:none}.food-row{grid-template-columns:27px 1fr auto}.food-row .macro{display:none}.gym-summary{grid-template-columns:1fr 1fr}.set-row{grid-template-columns:25px 1fr 1fr 35px}.set-row .set-rir{display:none}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.brand h1{font-size:21px}}
+</style>
+</head>
 <body>
-<header><div class="wrap top"><div><h1>🥗 Diet & Fitness Dashboard</h1><p>Google Sheets connected • Daily diet, calories & weight</p></div><button class="secondary" onclick="loadHistory()">↻ Sync History</button></div></header>
+<header><div class="wrap top"><div class="brand"><div class="brand-icon">⚡</div><div><h1>FitTrack</h1><p>Diet, hydration & strength — all in one place</p></div></div><div class="header-actions"><button class="btn btn-light" onclick="loadHistory()">↻ Sync</button><button class="btn btn-primary" onclick="saveToSheet()">☁ Save Day</button></div></div></header>
 <main class="wrap">
-<div class="toolbar"><b>Date:</b><input type="date" id="date"><span class="status" id="count">0 / 6 meals</span><button class="primary" onclick="saveToSheet()">☁️ Save to Google Sheet</button></div>
+<div class="toolbar"><div class="datebox">📅 <input type="date" id="date"></div><span class="pill" id="count">0 / 6 meals</span><span class="pill" id="workoutStatus">🏋️ 0 sets</span><span class="push"></span><span id="msg"></span></div>
 <div class="grid stats">
-<div class="card"><div class="label">🔥 Calories</div><div class="value"><span id="cal">0</span> / 2,885</div><div class="progress"><div id="calbar" class="bar"></div></div></div>
-<div class="card"><div class="label">💪 Protein</div><div class="value"><span id="protein">0</span> / 135g</div><div class="progress"><div id="pbar" class="bar"></div></div></div>
-<div class="card"><div class="label">🍚 Carbs</div><div class="value"><span id="carbs">0</span> / 345g</div><div class="progress"><div id="cbar" class="bar"></div></div></div>
-<div class="card"><div class="label">🥑 Fat</div><div class="value"><span id="fat">0</span> / 105g</div><div class="progress"><div id="fbar" class="bar"></div></div></div>
+ <div class="card stat"><div class="label">🔥 Calories</div><div class="value"><span id="cal">0</span><small> / 2,885 kcal</small></div><div class="progress"><div id="calbar" class="bar"></div></div><div class="sub" id="calSub">0% of daily target</div></div>
+ <div class="card stat"><div class="label">💪 Protein</div><div class="value"><span id="protein">0</span><small> / 135 g</small></div><div class="progress"><div id="pbar" class="bar"></div></div></div>
+ <div class="card stat"><div class="label">🍚 Carbs</div><div class="value"><span id="carbs">0</span><small> / 345 g</small></div><div class="progress"><div id="cbar" class="bar"></div></div></div>
+ <div class="card stat"><div class="label">🥑 Fat</div><div class="value"><span id="fat">0</span><small> / 105 g</small></div><div class="progress"><div id="fbar" class="bar"></div></div></div>
 </div>
-<h2>🍽️ Today's Meals</h2>
-<div class="card"><div class="meal" style="font-weight:800;color:#687386"><div>Meal</div><div>Food</div><div>Calories</div><div>Protein</div><div>Carbs</div><div>Done</div></div><div id="meals"></div></div>
-<h2>⚖️ Weight</h2>
-<div class="grid three"><div class="card"><b>Today's Weight</b><p><input id="weight" type="number" step=".1" placeholder="52.5 kg"> <button class="success" onclick="saveLocal()">Save</button></p><div id="msg"></div></div><div class="card"><div class="label">Starting Weight</div><div class="value" id="start">—</div></div><div class="card"><div class="label">Change</div><div class="value" id="change">—</div></div></div>
-<h2>📅 Google Sheet History</h2>
-<div class="card"><table><thead><tr><th>Date</th><th>Calories</th><th>Protein</th><th>Meals</th><th>Weight</th></tr></thead><tbody id="history"><tr><td colspan="5">Click Sync History after connecting the Apps Script URL.</td></tr></tbody></table></div>
+
+<div class="section-title"><h2>🍽️ Today's Meals</h2><span class="small">Tap a meal to open individual foods</span></div><div id="meals"></div>
+
+<div class="section-title"><h2>📈 Calorie Progress</h2><div class="chart-controls"><button id="c7" class="active" onclick="setChartDays(7)">7 days</button><button id="c30" onclick="setChartDays(30)">30 days</button></div></div>
+<div class="card"><div class="chart-wrap" id="chartWrap"><canvas id="calorieChart"></canvas><div class="chart-empty" id="chartEmpty" style="display:none">Save a few days to see your calorie trend.</div></div></div>
+
+<h2>💧 Hydration</h2><div class="card water-card"><div><b>Daily water intake</b><div class="small">1 glass = 250 ml • Target: <b>6 litres / 24 glasses</b></div></div><div class="water-controls"><button class="btn btn-soft water-btn" onclick="changeWater(-1)">−</button><div class="water-num"><span id="waterGlasses">0</span><small> glasses</small></div><button class="btn btn-primary water-btn" onclick="changeWater(1)">+</button></div><div class="water-full"><div class="water-label"><span id="waterMl">0 ml</span><span>6000 ml</span></div><div class="progress"><div id="waterbar" class="bar"></div></div></div></div>
+
+<h2>⚖️ Weight</h2><div class="grid three"><div class="card weight-card"><div><div class="label">Today's Weight</div><div class="small">Track your body-weight daily</div></div><div><input id="weight" class="input weight-input" type="number" step=".1" placeholder="52.0"> <button class="btn btn-green" onclick="saveLocal()">Save</button></div></div><div class="card"><div class="label">Starting Weight</div><div class="value" id="start">—</div></div><div class="card"><div class="label">Change</div><div class="value" id="change">—</div></div></div>
+
+<div class="section-title"><h2>🏋️ Gym Tracker</h2><button class="btn btn-soft" onclick="openExerciseModal()">＋ Add Exercise</button></div>
+<div class="card"><div class="gym-summary"><div class="gym-mini"><div class="small">Exercises</div><b id="exerciseCount">0</b></div><div class="gym-mini"><div class="small">Completed sets</div><b id="setCount">0</b></div><div class="gym-mini"><div class="small">Volume</div><b id="volume">0 kg</b></div></div><div id="gymList"></div><div class="gym-footer"><select id="workoutType" class="input workout-type" onchange="saveGym()"><option>Push</option><option>Pull</option><option>Legs</option><option>Full Body</option><option>Chest</option><option>Back</option><option>Arms</option><option>Shoulders</option></select><button class="btn btn-primary" onclick="saveToSheet()">☁ Save Workout</button></div></div>
+
+<h2>📅 History</h2><div class="card history-table"><table><thead><tr><th>Date</th><th>Calories</th><th>Protein</th><th>Meals</th><th>Water</th><th>Weight</th><th>Gym</th></tr></thead><tbody id="history"><tr><td colspan="7">Click Sync to load your Google Sheet history.</td></tr></tbody></table></div>
 </main>
+
+<div id="modalBackdrop" class="modal-backdrop" onclick="closeModal(event)"><div class="modal" onclick="event.stopPropagation()"><h3 id="modalTitle">➕ Add Custom Food</h3><div class="small" id="modalSubtitle"></div><div id="foodForm"><div class="form-grid"><div class="full"><label>Food name</label><input id="customName" class="input" type="text" placeholder="e.g. Oats 50g"></div><div><label>Calories (kcal)</label><input id="customCal" class="input" type="number" min="0" step="1"></div><div><label>Protein (g)</label><input id="customProtein" class="input" type="number" min="0" step=".1"></div><div><label>Carbs (g)</label><input id="customCarbs" class="input" type="number" min="0" step=".1"></div><div><label>Fat (g)</label><input id="customFat" class="input" type="number" min="0" step=".1"></div></div></div><div id="exerciseForm" style="display:none"><div class="form-grid"><div class="full"><label>Exercise name</label><input id="exerciseName" class="input" placeholder="e.g. Bench Press"></div><div><label>Sets</label><input id="exerciseSets" class="input" type="number" min="1" max="10" value="3"></div><div><label>Default reps</label><input id="exerciseReps" class="input" type="number" min="1" max="50" value="10"></div></div></div><div class="modal-actions"><button class="btn btn-soft" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="submitModal()">Add</button></div></div></div>
+
 <script>
 const meals=[
-["🌅 Breakfast","Sattu 50g • Milk 250ml • Banana • Apple • Peanut butter 1 tbsp",650,25,90,20],
-["🕚 Mid-morning","Kala chana 42g • 5 cashews • 20 raisins",250,10,40,7],
-["🍛 Lunch","Cooked rice 200g • Dal 150g • Sabji 100g",540,19,90,10],
-["🏋️ Pre-workout","Sattu 50g • Banana",300,13,50,4],
-["🍽️ Post-workout / Dinner","Paneer 150g • 2 roti • Sabji 100g",800,35,60,35],
-["🌙 Before bed","3 whole eggs • 2 egg whites • Peanut butter 1 tbsp",345,33,5,22]];
-const targets=[2885,135,345,105];
-let API_URL="https://script.google.com/macros/s/AKfycbwN_-9Qm-R71CY8q8kvQQgWRnmlgtICm42lYQ3LzeyFJuHDOGAVipeiBzWVgmRqc0VH/exec";
-let db=JSON.parse(localStorage.getItem("dietLocal")||"{}");
-let date=new Date().toISOString().slice(0,10);
-const $=id=>document.getElementById(id);
-$("date").value=date;
-function day(){if(!db[date])db[date]={done:Array(6).fill(false),weight:""};return db[date]}
-function saveLocal(){db[date].weight=$("weight").value;localStorage.setItem("dietLocal",JSON.stringify(db));$("msg").textContent="Saved locally ✓";render()}
-function toggle(i,v){day().done[i]=v;localStorage.setItem("dietLocal",JSON.stringify(db));render()}
-function render(){
-const d=day();$("weight").value=d.weight||"";
-$("meals").innerHTML=meals.map((m,i)=>`<div class="meal"><div class="mealname">${m[0]}</div><div class="food">${m[1]}</div><div>${m[2]} kcal</div><div>${m[3]}g</div><div>${m[4]}g</div><div><input class="done" type="checkbox" ${d.done[i]?"checked":""} onchange="toggle(${i},this.checked)"></div></div>`).join("");
-let v=[0,0,0,0,n=0];meals.forEach((m,i)=>{if(d.done[i]){v[0]+=m[2];v[1]+=m[3];v[2]+=m[4];v[3]+=m[5];n++}});
-$("cal").textContent=v[0];$("protein").textContent=v[1];$("carbs").textContent=v[2];$("fat").textContent=v[3];$("count").textContent=`${n} / 6 meals`;
-["calbar","pbar","cbar"].forEach((id,i)=>$(id).style.width=Math.min(100,v[i]/targets[i]*100)+"%");
-$("fbar").style.width=Math.min(100,v[3]/targets[3]*100)+"%";updateWeight();
+{name:"🌅 Breakfast",foods:[["Sattu 50g",180,10,30,3],["Milk 250ml",150,8,12,8],["Banana",105,1,27,.4],["Apple",95,.5,25,.3],["Peanut butter 1 tbsp",120,5,4,8]]},
+{name:"🕚 Mid-morning",foods:[["Kala chana 42g",150,8,25,2.5],["Cashews 5",45,1.5,2.5,3.5],["Raisins 20",55,.5,12.5,.1]]},
+{name:"🍛 Lunch",foods:[["Cooked rice 200g",260,5,56,.6],["Dal 150g",180,9,27,3],["Sabji 100g",100,5,7,6]]},
+{name:"🏋️ Pre-workout",foods:[["Sattu 50g",180,10,30,3],["Banana",120,3,20,1]]},
+{name:"🍽️ Post-workout / Dinner",foods:[["Paneer 150g",450,27,6,35],["Roti 2",220,6,40,4],["Sabji 100g",130,2,14,6]]},
+{name:"🌙 Before bed",foods:[["Whole eggs 3",216,19,1,15],["Egg whites 2",34,7,.5,0],["Peanut butter 1 tbsp",95,7,3.5,7]]}];
+const targets=[2885,135,345,105], WATER_GLASS_ML=250,WATER_TARGET_ML=6000;
+const API_URL="https://script.google.com/macros/s/AKfycbwN_-9Qm-R71CY8q8kvQQgWRnmlgtICm42lYQ3LzeyFJuHDOGAVipeiBzWVgmRqc0VH/exec";
+let db=JSON.parse(localStorage.getItem("dietLocal")||"{}"),customFoods=JSON.parse(localStorage.getItem("dietCustomFoods")||"[]"),openMeal=-1,modalMeal=-1,modalMode="food",chartDays=7,date=new Date().toISOString().slice(0,10),historyRows=[];
+const $=id=>document.getElementById(id);$("date").value=date;
+function baseDay(){return{selected:Array(meals.length).fill(null).map(()=>[]),weight:"",water:0,workoutType:"Push",gym:[]}}
+function normalizeDay(d){if(!Array.isArray(d.selected))d.selected=Array(meals.length).fill(null).map(()=>[]);while(d.selected.length<meals.length)d.selected.push([]);if(typeof d.water!=="number")d.water=0;if(!Array.isArray(d.gym))d.gym=[];if(!d.workoutType)d.workoutType="Push";if(d.done){d.done.forEach((v,i)=>{if(v&&(!d.selected[i]||!d.selected[i].length))d.selected[i]=meals[i].foods.map((_,j)=>"base-"+j)});delete d.done}}
+function day(){if(!db[date])db[date]=baseDay();normalizeDay(db[date]);return db[date]}
+function allFoods(mi){return meals[mi].foods.map((x,j)=>({id:"base-"+j,name:x[0],cal:x[1],p:x[2],c:x[3],f:x[4],custom:false})).concat(customFoods.filter(x=>x.meal===mi).map(x=>({...x,custom:true})))}
+function isSelected(mi,id){return day().selected[mi].includes(id)}
+function persist(){localStorage.setItem("dietLocal",JSON.stringify(db))}
+function toggleFood(mi,id,v){const d=day(),arr=d.selected[mi];if(v&&!arr.includes(id))arr.push(id);if(!v)d.selected[mi]=arr.filter(x=>x!==id);persist();render()}
+function toggleMeal(mi){openMeal=openMeal===mi?-1:mi;render()}
+function openFoodModal(mi){modalMode="food";modalMeal=mi;$('modalTitle').textContent="＋ Add Custom Food";$('modalSubtitle').textContent="Add a food inside "+meals[mi].name;$('foodForm').style.display="block";$('exerciseForm').style.display="none";['customName','customCal','customProtein','customCarbs','customFat'].forEach(id=>$(id).value="");showModal()}
+function openExerciseModal(){modalMode="exercise";modalMeal=-1;$('modalTitle').textContent="＋ Add Exercise";$('modalSubtitle').textContent="Build today's workout with sets and reps.";$('foodForm').style.display="none";$('exerciseForm').style.display="block";showModal()}
+function showModal(){$('modalBackdrop').style.display="flex"}
+function closeModal(e){if(e&&e.target!==$('modalBackdrop'))return;$('modalBackdrop').style.display="none"}
+function submitModal(){if(modalMode==="food")addCustomFood();else addExercise()}
+function addCustomFood(){const mi=modalMeal,name=$('customName').value.trim(),cal=+($('customCal').value||0),p=+($('customProtein').value||0),c=+($('customCarbs').value||0),f=+($('customFat').value||0);if(!name||cal<=0){alert("Food name and calories are required.");return}const id="custom-"+Date.now();customFoods.push({id,meal:mi,name,cal,p,c,f});localStorage.setItem("dietCustomFoods",JSON.stringify(customFoods));day().selected[mi].push(id);persist();closeModal();openMeal=mi;render()}
+function deleteCustom(id){customFoods=customFoods.filter(x=>x.id!==id);Object.values(db).forEach(d=>d.selected&&d.selected.forEach((a,i)=>d.selected[i]=a.filter(x=>x!==id)));localStorage.setItem("dietCustomFoods",JSON.stringify(customFoods));persist();render()}
+function totals(){const d=day(),v={cal:0,p:0,c:0,f:0};meals.forEach((m,mi)=>allFoods(mi).forEach(x=>{if(d.selected[mi].includes(x.id)){v.cal+=x.cal;v.p+=x.p;v.c+=x.c;v.f+=x.f}}));return v}
+function render(){const d=day();$('weight').value=d.weight||"";$('workoutType').value=d.workoutType||"Push";let mealCount=0;$('meals').innerHTML=meals.map((m,mi)=>{const foods=allFoods(mi),chosen=foods.filter(x=>isSelected(mi,x.id)),mt=chosen.reduce((a,x)=>({cal:a.cal+x.cal,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{cal:0,p:0,c:0,f:0});if(chosen.length)mealCount++;const open=openMeal===mi;return `<div class="meal-card"><div class="meal-head" onclick="toggleMeal(${mi})"><div><div class="meal-name">${m.name}</div><div class="meal-summary">${chosen.length}/${foods.length} foods selected</div></div><div class="meal-total">${mt.cal.toFixed(0)} kcal • ${mt.p.toFixed(1)}g protein</div><div class="chevron">${open?'▲':'▼'}</div></div>${open?`<div class="food-list"><div class="food-head"><span></span><span>Food</span><span>Kcal</span><span>P</span><span>C</span><span>F</span><span></span></div>${foods.map(x=>`<div class="food-row"><input class="food-check" type="checkbox" ${isSelected(mi,x.id)?'checked':''} onchange="toggleFood(${mi},'${x.id}',this.checked)"><div><div class="food-name">${x.name}${x.custom?'<span class="custom-tag">Custom</span>':''}</div><div class="food-meta">${x.cal} kcal • P ${x.p}g • C ${x.c}g • F ${x.f}g</div></div><div class="macro food-cal">${x.cal}</div><div class="macro">${x.p}g</div><div class="macro">${x.c}g</div><div class="macro">${x.f}g</div><div>${x.custom?`<button class="tiny-delete" title="Delete custom food" onclick="event.stopPropagation();deleteCustom('${x.id}')">×</button>`:''}</div></div>`).join("")}<button class="btn btn-soft add-food" onclick="event.stopPropagation();openFoodModal(${mi})">＋ Add Custom Food</button></div>`:""}</div>`}).join("");const t=totals();$('cal').textContent=Math.round(t.cal);$('protein').textContent=t.p.toFixed(1);$('carbs').textContent=t.c.toFixed(1);$('fat').textContent=t.f.toFixed(1);$('count').textContent=`${mealCount} / ${meals.length} meals`;$('calbar').style.width=Math.min(100,t.cal/targets[0]*100)+"%";$('pbar').style.width=Math.min(100,t.p/targets[1]*100)+"%";$('cbar').style.width=Math.min(100,t.c/targets[2]*100)+"%";$('fbar').style.width=Math.min(100,t.f/targets[3]*100)+"%";$('calSub').textContent=Math.round(t.cal/targets[0]*100)+"% of daily target";renderWater();renderGym();updateWeight();drawCalories()}
+function renderWater(){const ml=day().water*WATER_GLASS_ML;$('waterGlasses').textContent=day().water;$('waterMl').textContent=ml+" ml";$('waterbar').style.width=Math.min(100,ml/WATER_TARGET_ML*100)+"%"}
+function changeWater(n){day().water=Math.max(0,day().water+n);persist();renderWater()}
+function saveLocal(){day().weight=$('weight').value;persist();$('msg').textContent="Weight saved ✓";updateWeight();drawCalories()}
+function updateWeight(){const rows=Object.values(db).filter(x=>x.weight!==""&&x.weight!=null).map(x=>+x.weight);if(rows.length){$('start').textContent=rows[0].toFixed(1)+" kg";$('change').textContent=((+day().weight||rows[rows.length-1])-rows[0]).toFixed(1)+" kg"}}
+/* Gym */
+function addExercise(){const name=$('exerciseName').value.trim();const sets=Math.max(1,Math.min(10,+$('exerciseSets').value||3));const reps=Math.max(1,+$('exerciseReps').value||10);if(!name){alert("Enter an exercise name.");return}const d=day();d.gym.push({id:"ex-"+Date.now(),name,sets:Array.from({length:sets},(_,i)=>({reps,weight:"",done:false}))});persist();closeModal();renderGym()}
+function removeExercise(id){day().gym=day().gym.filter(x=>x.id!==id);persist();renderGym()}
+function addSet(id){const ex=day().gym.find(x=>x.id===id);if(ex){const last=ex.sets[ex.sets.length-1]||{reps:10,weight:"",done:false};ex.sets.push({reps:last.reps,weight:last.weight,done:false});persist();renderGym()}}
+function updateSet(exId,i,key,val){const ex=day().gym.find(x=>x.id===exId);if(!ex)return;ex.sets[i][key]=key==="done"?val:val;persist();renderGym(false)}
+function saveGym(){day().workoutType=$('workoutType').value;persist()}
+function renderGym(){
+  const d=day();
+  $('workoutType').value=d.workoutType||'Push';
+  let completed=0,volume=0;
+  d.gym.forEach(ex=>ex.sets.forEach(set=>{
+    if(set.done) completed++;
+    volume+=(Number(set.weight)||0)*(Number(set.reps)||0);
+  }));
+  $('exerciseCount').textContent=d.gym.length;
+  $('setCount').textContent=completed;
+  $('volume').textContent=Math.round(volume)+' kg';
+  $('workoutStatus').textContent='🏋️ '+completed+' sets';
+
+  if(!d.gym.length){
+    $('gymList').innerHTML='<div class="empty">No exercises yet. Add your first exercise to start today\'s workout.</div>';
+    return;
+  }
+
+  $('gymList').innerHTML=d.gym.map(function(ex){
+    const rows=ex.sets.map(function(set,i){
+      return '<div class="set-row">'
+        +'<div class="set-no">'+(i+1)+'</div>'
+        +'<input class="input" type="number" min="1" value="'+(set.reps||'')+'" onchange="updateSet(\''+ex.id+'\','+i+',\'reps\',this.value)">'
+        +'<input class="input" type="number" min="0" step=".5" value="'+(set.weight||'')+'" placeholder="kg" onchange="updateSet(\''+ex.id+'\','+i+',\'weight\',this.value)">'
+        +'<div class="set-rir"><input class="input" type="text" value="'+(set.note||'')+'" placeholder="RIR" onchange="updateSet(\''+ex.id+'\','+i+',\'note\',this.value)"></div>'
+        +'<input class="done-set" type="checkbox" '+(set.done?'checked':'')+' onchange="updateSet(\''+ex.id+'\','+i+',\'done\',this.checked)">'
+        +'</div>';
+    }).join('');
+
+    return '<div class="exercise">'
+      +'<div class="exercise-head"><div><span class="exercise-name">'+ex.name+'</span> <span class="badge">'+ex.sets.length+' sets</span></div>'
+      +'<div class="exercise-actions"><button class="btn btn-soft" onclick="addSet(\''+ex.id+'\')">＋ Set</button><button class="btn btn-danger" onclick="removeExercise(\''+ex.id+'\')">Delete</button></div></div>'
+      +'<div class="sets">'+rows+'</div></div>';
+  }).join('');
 }
-function totals(){const d=day(),v={cal:0,p:0,c:0,f:0};meals.forEach((m,i)=>{if(d.done[i]){v.cal+=m[2];v.p+=m[3];v.c+=m[4];v.f+=m[5]}});return v}
-async function saveToSheet(){
-if(!API_URL){API_URL=prompt("Paste your Google Apps Script Web App URL:","");if(!API_URL)return;localStorage.setItem("dietApiUrl",API_URL)}
-const d=day(),t=totals();$("msg").textContent="Saving...";
-try{const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({date,done:d.done,weight:d.weight,calories:t.cal,protein:t.p,carbs:t.c,fat:t.f}),headers:{"Content-Type":"text/plain;charset=utf-8"}});
-const j=await res.json();$("msg").textContent=j.ok?"Saved to Google Sheet ✓":"Error: "+j.error}catch(e){$("msg").textContent="Could not connect. Check your Apps Script URL/deployment."}
-}
-async function loadHistory(){
-if(!API_URL){API_URL=prompt("Paste your Google Apps Script Web App URL:","");if(!API_URL)return;localStorage.setItem("dietApiUrl",API_URL)}
-$("history").innerHTML="<tr><td colspan=5>Loading...</td></tr>";
-try{const r=await fetch(API_URL+"?action=history");const rows=await r.json();$("history").innerHTML=rows.length?rows.slice(0,30).map(x=>`<tr><td>${x.date}</td><td>${x.calories} kcal</td><td>${x.protein} g</td><td>${x.done.filter(Boolean).length}/6</td><td>${x.weight??"—"}</td></tr>`).join(""):"<tr><td colspan=5>No records found.</td></tr>"}catch(e){$("history").innerHTML="<tr><td colspan=5>Connection error.</td></tr>"}}
-function updateWeight(){const rows=Object.values(db).filter(x=>x.weight).map(x=>+x.weight);if(rows.length){$("start").textContent=rows[0].toFixed(1)+" kg";$("change").textContent=((+day().weight||rows[rows.length-1])-rows[0]).toFixed(1)+" kg"}}
-$("date").onchange=e=>{date=e.target.value;render()};render();
+/* History + chart */
+function selectedFoodCount(row){return row.selected?row.selected.flat().length:0}
+async function loadHistory(){if(!API_URL)return;$('history').innerHTML='<tr><td colspan="7">Loading...</td></tr>';try{const r=await fetch(API_URL+'?action=history');historyRows=await r.json();$('history').innerHTML=historyRows.length?historyRows.slice(0,30).map(x=>`<tr><td>${x.date}</td><td>${Math.round(x.calories)} kcal</td><td>${x.protein} g</td><td>${selectedFoodCount(x)} foods</td><td>${x.waterMl||0} ml</td><td>${x.weight??'—'}</td><td>${x.gym?.completedSets||0} sets</td></tr>`).join(""):'<tr><td colspan="7">No records found.</td></tr>';drawCalories()}catch(e){$('history').innerHTML='<tr><td colspan="7">Connection error. Check Apps Script deployment.</td></tr>'}}
+function localHistory(){return Object.entries(db).map(([d,v])=>({date:d,calories:totalsFor(v,d).cal,weight:v.weight,gym:{completedSets:(v.gym||[]).reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0)}}))}
+function totalsFor(v,d){const out={cal:0,p:0,c:0,f:0};meals.forEach((m,mi)=>allFoods(mi).forEach(x=>{if((v.selected?.[mi]||[]).includes(x.id)){out.cal+=x.cal;out.p+=x.p;out.c+=x.c;out.f+=x.f}}));return out}
+function mergedHistory(){const map={};localHistory().forEach(x=>map[x.date]=x);historyRows.forEach(x=>map[x.date]=x);return Object.values(map).sort((a,b)=>a.date.localeCompare(b.date))}
+function setChartDays(n){chartDays=n;$('c7').classList.toggle('active',n===7);$('c30').classList.toggle('active',n===30);drawCalories()}
+function drawCalories(){const canvas=$('calorieChart'),wrap=$('chartWrap');if(!canvas||!wrap)return;const data=mergedHistory().slice(-chartDays);if(!data.length){$('chartEmpty').style.display='grid';canvas.style.display='none';return}$('chartEmpty').style.display='none';canvas.style.display='block';const dpr=window.devicePixelRatio||1,w=wrap.clientWidth,h=wrap.clientHeight;canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const pad={l:42,r:18,t:20,b:35},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;const vals=data.map(x=>+x.calories||0),max=Math.max(3000,...vals)*1.12;ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;ctx.font='11px Inter, sans-serif';ctx.fillStyle='#98a2b3';for(let i=0;i<=4;i++){const y=pad.t+ch*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(Math.round(max-(max*i/4)),5,y+4)}const tx=i=>pad.l+(data.length===1?cw/2:cw*i/(data.length-1));const ty=v=>pad.t+ch-(v/max)*ch;ctx.beginPath();data.forEach((x,i)=>{const X=tx(i),Y=ty(+x.calories||0);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)});ctx.strokeStyle='#7c3aed';ctx.lineWidth=3;ctx.stroke();data.forEach((x,i)=>{const X=tx(i),Y=ty(+x.calories||0);ctx.beginPath();ctx.arc(X,Y,4,0,Math.PI*2);ctx.fillStyle='#7c3aed';ctx.fill();ctx.fillStyle='#667085';ctx.textAlign='center';ctx.fillText(x.date.slice(5),X,h-10)});ctx.textAlign='left'}
+async function saveToSheet(){const d=day(),t=totals();saveGym();$('msg').textContent='Saving...';try{const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({date,selected:meals.map((m,mi)=>allFoods(mi).filter(x=>d.selected[mi].includes(x.id)).map(x=>({name:x.name,cal:x.cal,p:x.p,c:x.c,f:x.f,custom:x.custom}))),weight:d.weight,water:d.water,waterMl:d.water*WATER_GLASS_ML,calories:t.cal,protein:t.p,carbs:t.c,fat:t.f,workoutType:d.workoutType,gym:d.gym}),headers:{'Content-Type':'text/plain;charset=utf-8'}});const j=await res.json();$('msg').textContent=j.ok?'Saved to Google Sheet ✓':'Error: '+j.error;if(j.ok){historyRows=historyRows.filter(x=>x.date!==date);historyRows.push({date,calories:t.cal,protein:t.p,selected:[],waterMl:d.water*WATER_GLASS_ML,weight:d.weight,gym:{completedSets:d.gym.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0)}});drawCalories()}}catch(e){$('msg').textContent='Could not connect. Check Apps Script URL/deployment.'}}
+$('date').onchange=e=>{date=e.target.value;openMeal=-1;render()};window.addEventListener('resize',drawCalories);render();loadHistory();
 </script></body></html>
