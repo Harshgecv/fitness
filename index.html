@@ -56,7 +56,7 @@ const meals=[
 {name:"🍽️ Post-workout / Dinner",foods:[["Paneer 150g",450,27,6,35],["Roti 2",220,6,40,4],["Sabji 100g",130,2,14,6]]},
 {name:"🌙 Before bed",foods:[["Whole eggs 3",216,19,1,15],["Egg whites 2",34,7,.5,0],["Peanut butter 1 tbsp",95,7,3.5,7]]}];
 const targets=[2885,135,345,105], WATER_GLASS_ML=250,WATER_TARGET_ML=6000;
-const API_URL="https://script.google.com/macros/s/AKfycbwN_-9Qm-R71CY8q8kvQQgWRnmlgtICm42lYQ3LzeyFJuHDOGAVipeiBzWVgmRqc0VH/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbzAPihLs3qmq4E6HRpsSMuCN79nf7cgglEbqZLFhT-UxgSwONBg0WM6JMFjw-WrBw/exec";
 let db=JSON.parse(localStorage.getItem("dietLocal")||"{}"),customFoods=JSON.parse(localStorage.getItem("dietCustomFoods")||"[]"),openMeal=-1,modalMeal=-1,modalMode="food",chartDays=7,date=new Date().toISOString().slice(0,10),historyRows=[];
 const $=id=>document.getElementById(id);$("date").value=date;
 function baseDay(){return{selected:Array(meals.length).fill(null).map(()=>[]),weight:"",water:0,workoutType:"Push",gym:[]}}
