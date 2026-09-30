@@ -123,7 +123,83 @@ function renderGym(){
 }
 /* History + chart */
 function selectedFoodCount(row){return row.selected?row.selected.flat().length:0}
-async function loadHistory(){if(!API_URL)return;$('history').innerHTML='<tr><td colspan="7">Loading...</td></tr>';try{const r=await fetch(API_URL+'?action=history');historyRows=await r.json();$('history').innerHTML=historyRows.length?historyRows.slice(0,30).map(x=>`<tr><td>${x.date}</td><td>${Math.round(x.calories)} kcal</td><td>${x.protein} g</td><td>${selectedFoodCount(x)} foods</td><td>${x.waterMl||0} ml</td><td>${x.weight??'—'}</td><td>${x.gym?.completedSets||0} sets</td></tr>`).join(""):'<tr><td colspan="7">No records found.</td></tr>';drawCalories()}catch(e){$('history').innerHTML='<tr><td colspan="7">Connection error. Check Apps Script deployment.</td></tr>'}}
+async function loadHistory(){
+  if(!API_URL)return;
+
+  $('history').innerHTML='<tr><td colspan="7">Loading...</td></tr>';
+
+  try{
+    const r=await fetch(API_URL+'?action=history');
+    historyRows=await r.json();
+
+    // Google Sheet data ko local dashboard me sync karo
+    historyRows.forEach(x=>{
+      if(!x.date) return;
+
+      if(!db[x.date]) db[x.date]=baseDay();
+
+      const d=db[x.date];
+      normalizeDay(d);
+
+      // Food selection sync
+      if(Array.isArray(x.selected)){
+        x.selected.forEach((foods,mi)=>{
+          if(!Array.isArray(foods)) return;
+
+          d.selected[mi]=[];
+
+          foods.forEach(f=>{
+            const foodsAvailable=allFoods(mi);
+            const match=foodsAvailable.find(a=>a.name===f.name);
+
+            if(match){
+              d.selected[mi].push(match.id);
+            }
+          });
+        });
+      }
+
+      // Water sync
+      if(typeof x.water === "number"){
+        d.water=x.water;
+      }else if(typeof x.waterMl === "number"){
+        d.water=Math.round(x.waterMl/WATER_GLASS_ML);
+      }
+
+      // Weight sync
+      if(x.weight!==null && x.weight!==undefined){
+        d.weight=x.weight;
+      }
+
+      // Gym sync
+      if(x.gym && Array.isArray(x.gym.data)){
+        d.gym=x.gym.data;
+      }
+    });
+
+    persist();
+
+    $('history').innerHTML=historyRows.length
+      ? historyRows.slice(0,30).map(x=>`
+        <tr>
+          <td>${x.date}</td>
+          <td>${Math.round(x.calories)} kcal</td>
+          <td>${x.protein} g</td>
+          <td>${selectedFoodCount(x)} foods</td>
+          <td>${x.waterMl||0} ml</td>
+          <td>${x.weight??'—'}</td>
+          <td>${x.gym?.completedSets||0} sets</td>
+        </tr>
+      `).join("")
+      : '<tr><td colspan="7">No records found.</td></tr>';
+
+    render();
+    drawCalories();
+
+  }catch(e){
+    $('history').innerHTML='<tr><td colspan="7">Connection error. Check Apps Script deployment.</td></tr>';
+  }
+}
 function localHistory(){return Object.entries(db).map(([d,v])=>({date:d,calories:totalsFor(v,d).cal,weight:v.weight,gym:{completedSets:(v.gym||[]).reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0)}}))}
 function totalsFor(v,d){const out={cal:0,p:0,c:0,f:0};meals.forEach((m,mi)=>allFoods(mi).forEach(x=>{if((v.selected?.[mi]||[]).includes(x.id)){out.cal+=x.cal;out.p+=x.p;out.c+=x.c;out.f+=x.f}}));return out}
 function mergedHistory(){const map={};localHistory().forEach(x=>map[x.date]=x);historyRows.forEach(x=>map[x.date]=x);return Object.values(map).sort((a,b)=>a.date.localeCompare(b.date))}
