@@ -148,23 +148,11 @@ if(Array.isArray(x.selected)){
 
     foods.forEach(f=>{
   if(f.custom === true){
-
-    const exists = customFoods.some(c =>
-      (f.id && c.id === f.id) ||
-      (c.meal === mi && c.name === f.name)
-    );
+    const exists = customFoods.some(c => c.id === f.id);
 
     if(!exists){
-
-      const newId = f.id ||
-        "custom-sync-" +
-        mi + "-" +
-        String(f.name || "food")
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g,"-");
-
       customFoods.push({
-        id: newId,
+        id: f.id,
         meal: mi,
         name: f.name || "",
         cal: Number(f.cal || 0),
