@@ -147,24 +147,34 @@ if(Array.isArray(x.selected)){
     if(!Array.isArray(foods)) return;
 
     foods.forEach(f=>{
-      if(f.custom === true){
-        const exists = customFoods.some(c => c.id === f.id);
+  if(f.custom === true){
 
-        if(!exists){
-          customFoods.push({
-            id: f.id,
-            meal: mi,
-            name: f.name || "",
-            cal: Number(f.cal || 0),
-            p: Number(f.p || 0),
-            c: Number(f.c || 0),
-            f: Number(f.f || 0)
-          });
-        }
-      }
-    });
-  });
+    const exists = customFoods.some(c =>
+      (f.id && c.id === f.id) ||
+      (c.meal === mi && c.name === f.name)
+    );
 
+    if(!exists){
+
+      const newId = f.id ||
+        "custom-sync-" +
+        mi + "-" +
+        String(f.name || "food")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g,"-");
+
+      customFoods.push({
+        id: newId,
+        meal: mi,
+        name: f.name || "",
+        cal: Number(f.cal || 0),
+        p: Number(f.p || 0),
+        c: Number(f.c || 0),
+        f: Number(f.f || 0)
+      });
+    }
+  }
+});
   localStorage.setItem(
     "dietCustomFoods",
     JSON.stringify(customFoods)
