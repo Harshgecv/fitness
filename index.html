@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -147,22 +148,24 @@ if(Array.isArray(x.selected)){
     if(!Array.isArray(foods)) return;
 
     foods.forEach(f=>{
-  if(f.custom === true){
-    const exists = customFoods.some(c => c.id === f.id);
+      if(f.custom === true){
+        const exists = customFoods.some(c => c.id === f.id);
 
-    if(!exists){
-      customFoods.push({
-        id: f.id,
-        meal: mi,
-        name: f.name || "",
-        cal: Number(f.cal || 0),
-        p: Number(f.p || 0),
-        c: Number(f.c || 0),
-        f: Number(f.f || 0)
-      });
-    }
-  }
-});
+        if(!exists){
+          customFoods.push({
+            id: f.id,
+            meal: mi,
+            name: f.name || "",
+            cal: Number(f.cal || 0),
+            p: Number(f.p || 0),
+            c: Number(f.c || 0),
+            f: Number(f.f || 0)
+          });
+        }
+      }
+    });
+  });
+
   localStorage.setItem(
     "dietCustomFoods",
     JSON.stringify(customFoods)
@@ -233,69 +236,6 @@ function totalsFor(v,d){const out={cal:0,p:0,c:0,f:0};meals.forEach((m,mi)=>allF
 function mergedHistory(){const map={};localHistory().forEach(x=>map[x.date]=x);historyRows.forEach(x=>map[x.date]=x);return Object.values(map).sort((a,b)=>a.date.localeCompare(b.date))}
 function setChartDays(n){chartDays=n;$('c7').classList.toggle('active',n===7);$('c30').classList.toggle('active',n===30);drawCalories()}
 function drawCalories(){const canvas=$('calorieChart'),wrap=$('chartWrap');if(!canvas||!wrap)return;const data=mergedHistory().slice(-chartDays);if(!data.length){$('chartEmpty').style.display='grid';canvas.style.display='none';return}$('chartEmpty').style.display='none';canvas.style.display='block';const dpr=window.devicePixelRatio||1,w=wrap.clientWidth,h=wrap.clientHeight;canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const pad={l:42,r:18,t:20,b:35},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;const vals=data.map(x=>+x.calories||0),max=Math.max(3000,...vals)*1.12;ctx.strokeStyle='#e5e7eb';ctx.lineWidth=1;ctx.font='11px Inter, sans-serif';ctx.fillStyle='#98a2b3';for(let i=0;i<=4;i++){const y=pad.t+ch*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(Math.round(max-(max*i/4)),5,y+4)}const tx=i=>pad.l+(data.length===1?cw/2:cw*i/(data.length-1));const ty=v=>pad.t+ch-(v/max)*ch;ctx.beginPath();data.forEach((x,i)=>{const X=tx(i),Y=ty(+x.calories||0);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)});ctx.strokeStyle='#7c3aed';ctx.lineWidth=3;ctx.stroke();data.forEach((x,i)=>{const X=tx(i),Y=ty(+x.calories||0);ctx.beginPath();ctx.arc(X,Y,4,0,Math.PI*2);ctx.fillStyle='#7c3aed';ctx.fill();ctx.fillStyle='#667085';ctx.textAlign='center';ctx.fillText(x.date.slice(5),X,h-10)});ctx.textAlign='left'}
-async function saveToSheet(){
-  const d=day(),t=totals();
-  saveGym();
-  $('msg').textContent='Saving...';
-
-  try{
-    const res=await fetch(API_URL,{
-      method:'POST',
-      body:JSON.stringify({
-        date,
-        selected:meals.map((m,mi)=>
-          allFoods(mi)
-          .filter(x=>d.selected[mi].includes(x.id))
-          .map(x=>({
-            id:x.id,
-            name:x.name,
-            cal:x.cal,
-            p:x.p,
-            c:x.c,
-            f:x.f,
-            custom:x.custom
-          }))
-        ),
-        weight:d.weight,
-        water:d.water,
-        waterMl:d.water*WATER_GLASS_ML,
-        calories:t.cal,
-        protein:t.p,
-        carbs:t.c,
-        fat:t.f,
-        workoutType:d.workoutType,
-        gym:d.gym
-      }),
-      headers:{
-        'Content-Type':'text/plain;charset=utf-8'
-      }
-    });
-
-    const j=await res.json();
-    $('msg').textContent=j.ok
-      ? 'Saved to Google Sheet ✓'
-      : 'Error: '+j.error;
-
-    if(j.ok){
-      historyRows=historyRows.filter(x=>x.date!==date);
-      historyRows.push({
-        date,
-        calories:t.cal,
-        protein:t.p,
-        selected:[],
-        waterMl:d.water*WATER_GLASS_ML,
-        weight:d.weight,
-        gym:{
-          completedSets:d.gym.reduce(
-            (a,e)=>a+e.sets.filter(s=>s.done).length,0
-          )
-        }
-      });
-      drawCalories();
-    }
-  }catch(e){
-    $('msg').textContent='Could not connect. Check Apps Script URL/deployment.'
-  }
-}
+async function saveToSheet(){const d=day(),t=totals();saveGym();$('msg').textContent='Saving...';try{const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({date,selected:meals.map((m,mi)=>allFoods(mi).filter(x=>d.selected[mi].includes(x.id)).map(x=>({name:x.name,cal:x.cal,p:x.p,c:x.c,f:x.f,custom:x.custom}))),weight:d.weight,water:d.water,waterMl:d.water*WATER_GLASS_ML,calories:t.cal,protein:t.p,carbs:t.c,fat:t.f,workoutType:d.workoutType,gym:d.gym}),headers:{'Content-Type':'text/plain;charset=utf-8'}});const j=await res.json();$('msg').textContent=j.ok?'Saved to Google Sheet ✓':'Error: '+j.error;if(j.ok){historyRows=historyRows.filter(x=>x.date!==date);historyRows.push({date,calories:t.cal,protein:t.p,selected:[],waterMl:d.water*WATER_GLASS_ML,weight:d.weight,gym:{completedSets:d.gym.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0)}});drawCalories()}}catch(e){$('msg').textContent='Could not connect. Check Apps Script URL/deployment.'}}
 $('date').onchange=e=>{date=e.target.value;openMeal=-1;render()};window.addEventListener('resize',drawCalories);render();loadHistory();
 </script></body></html>
