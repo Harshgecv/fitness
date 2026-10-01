@@ -141,6 +141,36 @@ async function loadHistory(){
       const d=db[x.date];
       normalizeDay(d);
 
+     // Custom foods ko Google Sheet history se restore karo
+if(Array.isArray(x.selected)){
+  x.selected.forEach((foods, mi)=>{
+    if(!Array.isArray(foods)) return;
+
+    foods.forEach(f=>{
+      if(f.custom === true){
+        const exists = customFoods.some(c => c.id === f.id);
+
+        if(!exists){
+          customFoods.push({
+            id: f.id,
+            meal: mi,
+            name: f.name || "",
+            cal: Number(f.cal || 0),
+            p: Number(f.p || 0),
+            c: Number(f.c || 0),
+            f: Number(f.f || 0)
+          });
+        }
+      }
+    });
+  });
+
+  localStorage.setItem(
+    "dietCustomFoods",
+    JSON.stringify(customFoods)
+  );
+}
+
       // Food selection sync
       if(Array.isArray(x.selected)){
         x.selected.forEach((foods,mi)=>{
